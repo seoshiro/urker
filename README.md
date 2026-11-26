@@ -34,9 +34,8 @@ The site is a motion piece, but everything that looks like data is computed in t
 
 [`scripts/media.mjs`](scripts/media.mjs) turns the raw generated clips and stills into web assets:
 
-- It crops the generator's rounded film frame from the hero clip.
-- It builds seamless loops by cross-fading each clip's tail into its head, so the last frame equals the first (34 dB PSNR at the seam).
-- It upscales the generator's 720p output to 1080p with a Lanczos filter and a light sharpen, strips audio, and encodes H.264 and VP9 at a high bitrate. The hero loop is 2.3 MB as WebM.
+- It builds seamless loops by cross-fading each clip's tail into its head, so the last frame equals the first. The star field rotates too fast for a cross-fade, which would double the stars, so it plays forward and then back.
+- It takes native 1080p sources, strips audio, and encodes H.264 and VP9 with a bitrate cap so that dense star fields stay sharp without bloating the files. The hero loop is 2.5 MB as WebM.
 - It encodes stills as AVIF and WebP at 960, 1600 and 2400 px.
 
 ## Stack
