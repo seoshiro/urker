@@ -12,16 +12,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const videos = [
   // crop: w:h:x:y in source pixels; trim: [start, end] seconds of usable footage
   { name: 'plateau', src: 'source/v1-plateau.mp4', crop: '1176:661:52:29', trim: [0, 10], fade: 1.5 },
-  {
-    name: 'stars',
-    src: 'source/v2-stars.mp4',
-    crop: null,
-    trim: [0, 8],
-    fade: 1.5,
-    // The generator put a camera tripod mid-frame: clone a feathered patch of ridge and sky over it.
-    retouch:
-      "[0:v]split[a][b];[b]crop=170:210:712:510,format=rgba,geq=r='r(X,Y)':g='g(X,Y)':b='b(X,Y)':a='255*min(1,min(X,W-1-X)/40)*min(1,Y/40)'[p];[a][p]overlay=548:510",
-  },
+  { name: 'stars', src: 'source/v2-stars.mp4', crop: null, trim: [0, 10], fade: 1.5 },
 ];
 
 // Scroll-scrubbed clips: every 4th frame a keyframe so seeking backwards stays smooth.
@@ -40,12 +31,6 @@ for (const v of videos) {
   if (!fs.existsSync(v.src)) {
     console.log(`skip ${v.name}: ${v.src} missing`);
     continue;
-  }
-  if (v.retouch) {
-    const clean = `tmp/${v.name}-clean.mp4`;
-    fs.mkdirSync('tmp', { recursive: true });
-    run(['-i', v.src, '-filter_complex', v.retouch, '-an', '-c:v', 'libx264', '-crf', '14', clean]);
-    v.src = clean;
   }
   const [s, e] = v.trim;
   const len = e - s;

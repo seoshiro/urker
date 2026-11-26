@@ -35,7 +35,6 @@ The site is a motion piece, but everything that looks like data is computed in t
 [`scripts/media.mjs`](scripts/media.mjs) turns the raw generated clips and stills into web assets:
 
 - It crops the generator's rounded film frame from the hero clip.
-- It retouches an unwanted tripod out of the star clip with a feathered clone patch.
 - It builds seamless loops by cross-fading each clip's tail into its head, so the last frame equals the first (34 dB PSNR at the seam).
 - It strips audio and encodes H.264 and VP9. The hero loop is 438 KB as WebM.
 - It encodes stills as AVIF and WebP at 960, 1600 and 2400 px.
