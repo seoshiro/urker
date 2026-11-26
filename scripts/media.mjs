@@ -25,6 +25,10 @@ const stills = [
   { name: 'brass', src: 'source/s4-brass.jpg', widths: [640, 1200] },
 ];
 
+// The generator delivers 720p: upscale to 1080p with lanczos and a light sharpen so the loops hold up
+// full-screen. shortcut: this adds no real detail, swap in native 1080p sources when available.
+const HD = 'scale=1920:-2:flags=lanczos,unsharp=5:5:0.5:5:5:0';
+
 const run = (args) => execFileSync(ffmpeg, ['-v', 'error', '-y', ...args], { stdio: 'inherit' });
 
 for (const v of videos) {
@@ -39,23 +43,23 @@ for (const v of videos) {
   // [main] = X..len, [head] = 0..X; fading main's last X seconds into head makes the
   // final frame equal main's first frame, so the loop point is invisible.
   const graph =
-    `[0:v]${crop}scale=1280:-2,setsar=1,fps=24,split=2[a][b];` +
+    `[0:v]${crop}${HD},setsar=1,fps=24,split=2[a][b];` +
     `[a]trim=start=${X},setpts=PTS-STARTPTS[main];` +
     `[b]trim=end=${X},setpts=PTS-STARTPTS[head];` +
     `[main][head]xfade=transition=fade:duration=${X}:offset=${len - 2 * X},format=yuv420p[v]`;
   const input = ['-ss', String(s), '-t', String(len), '-i', v.src];
   run([...input, '-filter_complex', graph, '-map', '[v]', '-an', '-c:v', 'libx264', '-preset', 'slow',
-    '-crf', '25', '-movflags', '+faststart', `${OUT}/${v.name}.mp4`]);
+    '-crf', '19', '-movflags', '+faststart', `${OUT}/${v.name}.mp4`]);
   run([...input, '-filter_complex', graph, '-map', '[v]', '-an', '-c:v', 'libvpx-vp9', '-b:v', '0',
-    '-crf', '38', '-row-mt', '1', `${OUT}/${v.name}.webm`]);
+    '-crf', '28', '-row-mt', '1', `${OUT}/${v.name}.webm`]);
   run(['-i', `${OUT}/${v.name}.mp4`, '-frames:v', '1', '-q:v', '3', `${OUT}/${v.name}-poster.jpg`]);
   const kb = (f) => Math.round(fs.statSync(f).size / 1024);
   console.log(`${v.name}: mp4 ${kb(`${OUT}/${v.name}.mp4`)} KB, webm ${kb(`${OUT}/${v.name}.webm`)} KB`);
 }
 
 for (const v of scrubbed) {
-  run(['-i', v.src, '-an', '-vf', 'scale=1280:-2,fps=24,format=yuv420p', '-c:v', 'libx264', '-preset', 'slow',
-    '-crf', '26', '-g', '4', '-keyint_min', '4', '-sc_threshold', '0', '-movflags', '+faststart',
+  run(['-i', v.src, '-an', '-vf', `${HD},fps=24,format=yuv420p`, '-c:v', 'libx264', '-preset', 'slow',
+    '-crf', '21', '-g', '4', '-keyint_min', '4', '-sc_threshold', '0', '-movflags', '+faststart',
     `${OUT}/${v.name}.mp4`]);
   run(['-i', `${OUT}/${v.name}.mp4`, '-frames:v', '1', '-q:v', '3', `${OUT}/${v.name}-poster.jpg`]);
   console.log(`${v.name}: scrub mp4 ${Math.round(fs.statSync(`${OUT}/${v.name}.mp4`).size / 1024)} KB`);

@@ -36,7 +36,7 @@ The site is a motion piece, but everything that looks like data is computed in t
 
 - It crops the generator's rounded film frame from the hero clip.
 - It builds seamless loops by cross-fading each clip's tail into its head, so the last frame equals the first (34 dB PSNR at the seam).
-- It strips audio and encodes H.264 and VP9. The hero loop is 438 KB as WebM.
+- It upscales the generator's 720p output to 1080p with a Lanczos filter and a light sharpen, strips audio, and encodes H.264 and VP9 at a high bitrate. The hero loop is 2.3 MB as WebM.
 - It encodes stills as AVIF and WebP at 960, 1600 and 2400 px.
 
 ## Stack
