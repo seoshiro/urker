@@ -413,7 +413,9 @@ button {
 .tonight-stage .shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(17, 15, 12, 0.92) 0%, rgba(17, 15, 12, 0.55) 48%, rgba(17, 15, 12, 0.25) 100%);
+  /* the footage has a dome bottom-left, right under the readout: keep that corner dark */
+  background: linear-gradient(0deg, rgba(17, 15, 12, 0.9) 0%, rgba(17, 15, 12, 0) 55%),
+    linear-gradient(90deg, rgba(17, 15, 12, 0.92) 0%, rgba(17, 15, 12, 0.55) 48%, rgba(17, 15, 12, 0.25) 100%);
 }
 .tonight-grid {
   position: absolute;
@@ -485,7 +487,11 @@ button {
   position: absolute;
   inset: -20% -10%;
   z-index: -1;
-  background: radial-gradient(closest-side, rgba(17, 15, 12, 0.78), rgba(17, 15, 12, 0));
+  background: radial-gradient(closest-side, rgba(17, 15, 12, 0.85), rgba(17, 15, 12, 0));
+}
+.aperture-copy .label,
+.aperture-copy p {
+  text-shadow: 0 1px 14px rgba(17, 15, 12, 0.95);
 }
 .aperture-title {
   font-size: clamp(48px, 9vw, 160px);
@@ -515,10 +521,14 @@ button {
 }
 .caption {
   display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
   justify-content: space-between;
   margin-top: 12px;
 }
 .list {
+  /* items slide in from the right; clip them so phones do not widen the page */
+  overflow-x: clip;
   list-style: none;
   margin: 40px 0 0;
   padding: 0;
@@ -784,6 +794,9 @@ button {
   .cal-wrap,
   .footer-grid {
     grid-template-columns: 1fr;
+  }
+  .tonight-stage .shade {
+    background: linear-gradient(0deg, rgba(17, 15, 12, 0.92) 0%, rgba(17, 15, 12, 0.6) 60%, rgba(17, 15, 12, 0.3) 100%);
   }
   .tonight-grid {
     grid-template-columns: 1fr;
